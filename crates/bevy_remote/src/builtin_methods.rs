@@ -528,9 +528,13 @@ pub fn process_remote_get_resource_request(
     };
 
     // Get the single value out of the map.
-    let value = serialized_object.into_values().next().ok_or_else(|| {
-        BrpError::internal(anyhow!("Unexpected format of serialized resource value"))
-    })?;
+    let value = serialized_object
+        .values()
+        .next()
+        .ok_or_else(|| {
+            BrpError::internal(anyhow!("Unexpected format of serialized resource value"))
+        })?
+        .clone();
     let response = BrpGetResourceResponse { value };
     serde_json::to_value(response).map_err(BrpError::internal)
 }
